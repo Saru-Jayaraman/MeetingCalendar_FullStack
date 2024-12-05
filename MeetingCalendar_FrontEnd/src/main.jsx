@@ -1,3 +1,7 @@
 import { createRoot } from 'react-dom/client';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import MeetingCalendarApp from './components/shared/MeetingCalendarApp';
 
-createRoot(document.getElementById('root')).render(<b>Hello JS</b>);
+createRoot(document.getElementById('root')).render(<MeetingCalendarApp />);
