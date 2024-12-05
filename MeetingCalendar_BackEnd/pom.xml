@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.lexicon</groupId>
-	<artifactId>MarketplaceAPI_SpringBoot</artifactId>
+	<artifactId>MeetingCalendar_BackEnd</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Marketplace_API_SpringBoot</name>
-	<description>Marketplace_API_SpringBoot</description>
+	<name>MeetingCalendar_BackEnd</name>
+	<description>MeetingCalendar_BackEnd</description>
 	<url/>
 	<licenses>
 		<license/>
