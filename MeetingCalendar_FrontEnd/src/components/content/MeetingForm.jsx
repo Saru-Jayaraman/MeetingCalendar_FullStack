@@ -5,7 +5,7 @@ import { HiMiniPlus } from "react-icons/hi2";
 import { AiOutlineSave } from "react-icons/ai";
 import { MdClear } from "react-icons/md";
 
-const MeetingForm = ({setShowAlert, showEdit, meetingFormData, setMeetingFormData, createMeetingAPI, updateMeetingAPI, clearFields, handleCreateButton, showAlert}) => {
+const MeetingForm = ({setShowAlert, showEdit, meetingFormData, setMeetingFormData, handleCreateMeeting, handleUpdateMeeting, clearFields, handleCreateButton}) => {
     const {register, handleSubmit, setValue, getFieldState, clearErrors, 
         formState: {errors}} = useFormContext();
 
@@ -173,9 +173,9 @@ const MeetingForm = ({setShowAlert, showEdit, meetingFormData, setMeetingFormDat
             </div>
             <div className='form-group mt-2'>
                 {!showEdit ? 
-                    (<button type="button" className='btn btn-success mx-2' id="createMeeting" onClick={handleSubmit(createMeetingAPI)}><HiMiniPlus /> Create Meeting</button>)
+                    (<button type="button" className='btn btn-success mx-2' id="createMeeting" onClick={handleSubmit(handleCreateMeeting)}><HiMiniPlus /> Create Meeting</button>)
                     :
-                    (<button type="button" className='btn btn-success mx-2' id="editMeeting" style={{backgroundColor: "#fd7e14"}} onClick={handleSubmit(updateMeetingAPI)}><AiOutlineSave /> Edit</button>)
+                    (<button type="button" className='btn btn-success mx-2' id="editMeeting" style={{backgroundColor: "#fd7e14"}} onClick={handleSubmit(handleUpdateMeeting)}><AiOutlineSave /> Edit</button>)
                 }
                 <button type="button" className='btn btn-warning mx-2' id="clearMeeting" onClick={handleClearEvent}><MdClear /> Clear</button>
             </div>

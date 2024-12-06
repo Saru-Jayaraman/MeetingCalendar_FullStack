@@ -2,7 +2,7 @@ import React from 'react';
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
 
-const MeetingsList = ({allMeetingsData, deleteMeetingAPI, handleEditEvent}) => {
+const MeetingsList = ({allMeetingsData, handleDeleteMeeting, handleEditEvent}) => {
     const displayMeetingList = (() => {
         const allRowElements = allMeetingsData.map((meeting) => {
             const trElement = 
@@ -17,7 +17,7 @@ const MeetingsList = ({allMeetingsData, deleteMeetingAPI, handleEditEvent}) => {
                         <span className='p-1 mx-1 border rounded-2' style={{backgroundColor: "#fd7e14"}} 
                             onClick={() => handleEditEvent(meeting.id)}><FaEdit /></span>
                         <span className="bg-danger p-1 mx-1 border rounded-2"><RiDeleteBin5Line 
-                            onClick={() => deleteMeetingAPI(meeting.id)} /></span>
+                            onClick={() => handleDeleteMeeting(meeting.id)} /></span>
                     </td>
                 </tr>
                 return trElement;

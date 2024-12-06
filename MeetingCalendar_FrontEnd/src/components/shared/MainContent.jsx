@@ -4,9 +4,9 @@ import AlertMessage from '../content/AlertMessage';
 import Dashboard from '../content/Dashboard';
 import MeetingForm from '../content/MeetingForm';
 import MeetingsList from '../content/MeetingsList';
-import { getAllMeetingsData, addMeetingData, updateMeetingData, deleteMeetingData } from '../../service/MeetingAPI';
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaCheckCircle } from 'react-icons/fa';
+import axios from 'axios';
 
 const MainContent = () => {
     const methods = useForm();
@@ -26,6 +26,7 @@ const MainContent = () => {
     const [editId, setEditId] = useState();
     const [reload, setReload] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
+    const apiEndpoint = "http://localhost:8080/api/meetings";
     const handleCreateButton = () => {// showing create button
         setShowEdit(false);
     };
@@ -33,41 +34,10 @@ const MainContent = () => {
         setShowEdit(true);
     };
 
-    const createMeetingAPI = () => {
-        addMeetingData(meetingFormData);
-        setAlertName("CREATED");
-        setAlertColor("success");
-        setShowAlert(true);
-        clearFields();
-    };
-
-    const updateMeetingAPI = () => {
-        updateMeetingData(editId, meetingFormData);
-        handleCreateButton();
-        setAlertName("EDITED");
-        setAlertColor("warning");
-        setShowAlert(true);
-        clearFields();
-    };
-
-    const deleteMeetingAPI = (id) => {
-        if(confirm("Confirm to delete?")) {
-            deleteMeetingData(id);
-            handleCreateButton();
-            setAlertName("DELETED");
-            setAlertColor("danger");
-            setShowAlert(true);
-            methods.clearErrors();
-            clearFields();
-        } else {
-            setAlertName("CANCELLED");
-            setAlertColor("info");
-        }
-    };
-
     const handleEditEvent = (id) => {
         const foundMeeting = allMeetingsData.filter(meeting => meeting.id === id);
         const setMeeting = {
+            id: foundMeeting[0].id,
             title: foundMeeting[0].title,
             date: foundMeeting[0].date,
             startTime: foundMeeting[0].startTime,
@@ -83,6 +53,33 @@ const MainContent = () => {
         methods.clearErrors();
     };
 
+    const handleCreateMeeting = () => {
+        createMeetingAPICall();
+        clearFields();
+        postAPIOperation("CREATED", "success");
+    };
+
+    const handleUpdateMeeting = () => {
+        updateMeetingAPICall();
+        handleCreateButton();
+        clearFields();
+        postAPIOperation("EDITED", "warning");
+    };
+
+    const handleDeleteMeeting = (deleteId) => {
+        if(confirm("Confirm to delete?")) {
+            deleteMeetingAPICall(deleteId);
+            handleCreateButton();
+            methods.clearErrors();
+            clearFields();
+            postAPIOperation("DELETED", "danger");
+        } else {
+            methods.clearErrors();
+            clearFields();
+            postAPIOperation("CANCELLED", "info");
+        }
+    };
+    
     const clearFields = () => {
         setMeetingFormData({
             title: "",
@@ -93,11 +90,71 @@ const MainContent = () => {
             participants: "",
             description: ""
         });
-        setReload(!reload);
+    };
+
+    const postAPIOperation = (name, color) => {
+        setAlertName(name);
+        setAlertColor(color);
+        setShowAlert(true);
+    };
+
+    const fetchAllMeetingsAPICall = async () => {
+        console.log("Step1: Request FETCH ALL...");
+        await axios.get(apiEndpoint)
+            .then(response => {
+                console.log("Step2: Response FETCH ALL...");
+                if(response.status === 200) {
+                    console.log(response.data);
+                    setAllMeetingsData(response.data);
+                } else {
+                    console.log("Unexpected response status...", response.status);
+                }
+            })
+            .catch(error => {
+                console.log("Error on fetching meeting details...", error);
+        });
+        console.log("Step3: Finish FETCH ALL...");
+    };
+
+    const createMeetingAPICall = async () => {
+        try {
+            const response = await axios.post(apiEndpoint, meetingFormData);
+            if(response.status === 201) {
+                console.log("Meeting added successfully...");
+                console.log("Response: ", response.data);
+                setReload(!reload);
+            }
+        } catch(error) {
+            console.log("Error on creating meeting...", error);
+        }
+    };
+
+    const updateMeetingAPICall = async () => {
+        try {
+            const response = await axios.put(`${apiEndpoint}/${editId}`, meetingFormData);
+            if(response.status === 204) {
+                console.log("Meeting updated successfully...");
+                setReload(!reload);
+            }
+        } catch(error) {
+            console.log("Error on updating meeting...", error);
+        }
+    };
+
+    const deleteMeetingAPICall = async (deleteId) => {
+        try {
+            const response = await axios.delete(`${apiEndpoint}/${deleteId}`);
+            if(response.status === 204) {
+                console.log("Meeting deleted successfully...");
+                setReload(!reload);
+            }
+        } catch(error) {
+            console.log("Error on deleting meeting...", error);
+        }
     };
 
     useEffect(() => {
-        setAllMeetingsData(getAllMeetingsData());
+        fetchAllMeetingsAPICall();
     }, [reload]);
 
     return (
@@ -131,8 +188,8 @@ const MainContent = () => {
                                 <MeetingForm
                                     meetingFormData={meetingFormData} setMeetingFormData={setMeetingFormData} 
                                     showAlert={showAlert} setShowAlert={setShowAlert}
-                                    createMeetingAPI={createMeetingAPI}
-                                    updateMeetingAPI={updateMeetingAPI}
+                                    handleCreateMeeting={handleCreateMeeting}
+                                    handleUpdateMeeting={handleUpdateMeeting}
                                     clearFields={clearFields}
                                     showEdit={showEdit}
                                     handleCreateButton={handleCreateButton} />
@@ -143,7 +200,7 @@ const MainContent = () => {
                                 <h5 className="card-title">List of Created Meetings</h5>
                                 <MeetingsList 
                                     allMeetingsData={allMeetingsData} 
-                                    deleteMeetingAPI={deleteMeetingAPI}
+                                    handleDeleteMeeting={handleDeleteMeeting}
                                     handleEditEvent={handleEditEvent} />
                             </div>
                         </div>
