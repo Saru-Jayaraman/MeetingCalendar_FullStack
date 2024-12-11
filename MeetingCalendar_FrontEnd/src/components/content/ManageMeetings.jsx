@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import AlertMessage from '../content/AlertMessage';
-import Dashboard from '../content/Dashboard';
-import MeetingForm from '../content/MeetingForm';
-import MeetingsList from '../content/MeetingsList';
-import { FaCalendarAlt } from "react-icons/fa";
-import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
+import { FormProvider, useForm } from 'react-hook-form';
+import AlertMessage from './AlertMessage';
+import MeetingForm from './MeetingForm';
+import MeetingsList from './MeetingsList';
+import { FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
 
-const MainContent = () => {
+const ManageMeetings = () => {
     const methods = useForm();
     let [meetingFormData, setMeetingFormData] = useState({
         title: "",
@@ -53,30 +51,26 @@ const MainContent = () => {
         methods.clearErrors();
     };
 
-    const handleCreateMeeting = () => {
-        createMeetingAPICall();
-        clearFields();
-        postAPIOperation("CREATED", "success");
-    };
-
     const handleUpdateMeeting = () => {
         updateMeetingAPICall();
         handleCreateButton();
         clearFields();
-        postAPIOperation("EDITED", "warning");
+        postAPIOperation("UPDATED", "warning");
+        document.getElementById("meetingform").style.display="none";
+
     };
 
     const handleDeleteMeeting = (deleteId) => {
-        if(confirm("Confirm to delete?")) {
+        if(confirm("Do you want to cancel the meeting?")) {
             deleteMeetingAPICall(deleteId);
             handleCreateButton();
             methods.clearErrors();
             clearFields();
-            postAPIOperation("DELETED", "danger");
+            postAPIOperation("CANCELLED", "danger");
         } else {
             methods.clearErrors();
             clearFields();
-            postAPIOperation("CANCELLED", "info");
+            postAPIOperation("Retained", "info");
         }
     };
     
@@ -90,6 +84,7 @@ const MainContent = () => {
             participants: "",
             description: ""
         });
+        document.getElementById("meetingform").style.display="none";
     };
 
     const postAPIOperation = (name, color) => {
@@ -114,19 +109,6 @@ const MainContent = () => {
                 console.log("Error on fetching meeting details...", error);
         });
         console.log("Step3: Finish FETCH ALL...");
-    };
-
-    const createMeetingAPICall = async () => {
-        try {
-            const response = await axios.post(apiEndpoint, meetingFormData);
-            if(response.status === 201) {
-                console.log("Meeting added successfully...");
-                console.log("Response: ", response.data);
-                setReload(!reload);
-            }
-        } catch(error) {
-            console.log("Error on creating meeting...", error);
-        }
     };
 
     const updateMeetingAPICall = async () => {
@@ -159,52 +141,35 @@ const MainContent = () => {
 
     return (
     <div className='container-fluid bg-light'>
-        <div className='row'>
-            <div className='col'>
-                {showAlert && <AlertMessage icon={<FaCheckCircle />} 
-                message=
-                {
-                <>
-                    {alertName !== "CANCELLED" ? 
-                        (<>Meeting is successfully <b>{alertName}</b></>) : (<>Deletion opertion is <b>{alertName}</b></>)}
-                </>
-                } 
-                color={alertColor} />}
-            </div>
-        </div>
+        {showAlert && <AlertMessage icon={<FaCheckCircle />} 
+            message={<>Meeting is successfully <b>{alertName}</b></>} 
+            color={alertColor} />
+        }
 
         <div className='row'>
-            <div className='col-md-3'>
-                <div className='my-2 ms-4'>
-                    <Dashboard />
-                </div>
-            </div>
-            <div className='col-md-9'>
-                <div className='my-2 me-4 px-2 py-2 bg-white'>
-                    <FormProvider {...methods}>
-                        <div className="card mb-1">
-                            <div className="card-body">
-                                <h5 className="card-title bg-primary ps-1 py-1 rounded text-white"><FaCalendarAlt /> Schedule a New Meeting</h5>
-                                <MeetingForm
-                                    meetingFormData={meetingFormData} setMeetingFormData={setMeetingFormData} 
-                                    showAlert={showAlert} setShowAlert={setShowAlert}
-                                    handleCreateMeeting={handleCreateMeeting}
-                                    handleUpdateMeeting={handleUpdateMeeting}
-                                    clearFields={clearFields}
-                                    showEdit={showEdit}
-                                    handleCreateButton={handleCreateButton} />
-                            </div>
+            <div className='bg-white'>
+                <FormProvider {...methods}>
+                    <div id="meetingform" className="card mb-1" style={{display: "none"}}>
+                        <div className="card-body">
+                            <h5 className="card-title bg-primary ps-1 py-1 rounded text-white"><FaCalendarAlt /> Schedule a New Meeting</h5>
+                            {meetingFormData && meetingFormData.id != null && <MeetingForm
+                                meetingFormData={meetingFormData} setMeetingFormData={setMeetingFormData} 
+                                showAlert={showAlert} setShowAlert={setShowAlert}
+                                handleUpdateMeeting={handleUpdateMeeting}
+                                clearFields={clearFields}
+                                showEdit={showEdit} />}
+                            
                         </div>
-                        <div className="card mb-1" style={{overflowY: "scroll", height: "150px"}}>
-                            <div className="card-body">
-                                <h5 className="card-title">List of Created Meetings</h5>
-                                <MeetingsList 
-                                    allMeetingsData={allMeetingsData} 
-                                    handleDeleteMeeting={handleDeleteMeeting}
-                                    handleEditEvent={handleEditEvent} />
-                            </div>
-                        </div>
-                    </FormProvider>
+                    </div>
+                </FormProvider>
+                <div className="card my-2" style={{overflowY: "scroll", height: "550px"}}>
+                    <div className="card-body">
+                        <h5 className="card-title">List of Created Meetings</h5>
+                        <MeetingsList 
+                            allMeetingsData={allMeetingsData} 
+                            handleDeleteMeeting={handleDeleteMeeting}
+                            handleEditEvent={handleEditEvent} />
+                    </div>
                 </div>
             </div>
         </div>
@@ -212,4 +177,4 @@ const MainContent = () => {
     );
 };
 
-export default MainContent;
+export default ManageMeetings;

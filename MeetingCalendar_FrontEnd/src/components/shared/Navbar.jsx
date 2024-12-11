@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FcCalendar } from "react-icons/fc";
 import { FaCircleUser } from "react-icons/fa6";
 import { VscSignOut } from "react-icons/vsc";
@@ -6,10 +7,10 @@ import { MdOutlineSettings } from "react-icons/md";
 
 const Navbar = () => {
     const navItems = [
-        {id: 1, name: "Home", href: "#"},
-        {id: 2, name: "About", href: "#"},
-        {id: 3, name: "Services", href: "#"},
-        {id: 4, name: "Contact", href: "#"}
+        {id: 1, name: "Home", href: "/dashboard/home"},
+        {id: 2, name: "About", href: "/about"},
+        {id: 3, name: "Services", href: "/services"},
+        {id: 4, name: "Contact", href: "/contact"}
     ];
     const navDemoDropdownItems = [
         {id:1, name: "Signout", href: "#", icon: <VscSignOut />},
@@ -24,7 +25,7 @@ const Navbar = () => {
                     navItems.map((item) => {
                         const liItem = 
                             <li className='nav-item' key={item.id}>
-                                <a className='nav-link text-light' href={item.href}>{item.name}</a>
+                                <Link className='nav-link text-light' to={item.href}>{item.name}</Link>
                             </li>
                         return liItem;
                     })

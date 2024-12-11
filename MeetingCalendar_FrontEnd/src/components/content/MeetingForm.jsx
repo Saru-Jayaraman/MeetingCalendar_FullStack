@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import validator from 'validator';
 import { HiMiniPlus } from "react-icons/hi2";
@@ -8,6 +8,12 @@ import { MdClear } from "react-icons/md";
 const MeetingForm = ({setShowAlert, showEdit, meetingFormData, setMeetingFormData, handleCreateMeeting, handleUpdateMeeting, clearFields, handleCreateButton}) => {
     const {register, handleSubmit, setValue, getFieldState, clearErrors, 
         formState: {errors}} = useFormContext();
+
+        useEffect(() => {
+            console.log("Meeting form data: ", meetingFormData);
+            setValue("startTime", meetingFormData.startTime);
+            setValue("endTime", meetingFormData.endTime);
+        },[]);
 
     const validateDate = (enteredDate) => {
         const currentDate = new Date();
@@ -19,7 +25,7 @@ const MeetingForm = ({setShowAlert, showEdit, meetingFormData, setMeetingFormDat
                 return("Enter Future date!");
             }
         }
-    }
+    };
 
     const validateStartTime = (enteredTime) => {
         const currentDate = new Date();
@@ -72,7 +78,7 @@ const MeetingForm = ({setShowAlert, showEdit, meetingFormData, setMeetingFormDat
 
     return (
     <div>
-        <form action="#">
+        <form onSubmit={handleSubmit(handleCreateMeeting)}>
             <div className='row'>
                 <div className='col-md-2'>
                     <label htmlFor="titleFor" className='form-label fw-bold'>Meeting Title</label>
@@ -173,9 +179,9 @@ const MeetingForm = ({setShowAlert, showEdit, meetingFormData, setMeetingFormDat
             </div>
             <div className='form-group mt-2'>
                 {!showEdit ? 
-                    (<button type="button" className='btn btn-success mx-2' id="createMeeting" onClick={handleSubmit(handleCreateMeeting)}><HiMiniPlus /> Create Meeting</button>)
+                    (<button type="submit" className='btn btn-success mx-2' id="createMeeting"><HiMiniPlus /> Create Meeting</button>)
                     :
-                    (<button type="button" className='btn btn-success mx-2' id="editMeeting" style={{backgroundColor: "#fd7e14"}} onClick={handleSubmit(handleUpdateMeeting)}><AiOutlineSave /> Edit</button>)
+                    (<button type="button" className='btn btn-success mx-2' id="editMeeting" style={{backgroundColor: "#fd7e14"}} onClick={handleSubmit(handleUpdateMeeting)}><AiOutlineSave /> Update Meeting</button>)
                 }
                 <button type="button" className='btn btn-warning mx-2' id="clearMeeting" onClick={handleClearEvent}><MdClear /> Clear</button>
             </div>
