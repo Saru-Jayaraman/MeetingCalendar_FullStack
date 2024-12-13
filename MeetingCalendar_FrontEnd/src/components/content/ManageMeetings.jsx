@@ -7,6 +7,12 @@ import MeetingsList from './MeetingsList';
 import { FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
 
 const ManageMeetings = () => {
+    const [reload, setReload] = useState(false);
+
+    useEffect(() => {
+        fetchAllMeetingsAPICall();
+    }, [reload]);
+
     const methods = useForm();
     let [meetingFormData, setMeetingFormData] = useState({
         title: "",
@@ -22,7 +28,6 @@ const ManageMeetings = () => {
     const [alertName, setAlertName] = useState('');
     const [alertColor, setAlertColor] = useState('');
     const [editId, setEditId] = useState();
-    const [reload, setReload] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const apiEndpoint = "http://localhost:8080/api/meetings";
     const handleCreateButton = () => {// showing create button
@@ -134,10 +139,6 @@ const ManageMeetings = () => {
             console.log("Error on deleting meeting...", error);
         }
     };
-
-    useEffect(() => {
-        fetchAllMeetingsAPICall();
-    }, [reload]);
 
     return (
     <div className='container-fluid bg-light'>

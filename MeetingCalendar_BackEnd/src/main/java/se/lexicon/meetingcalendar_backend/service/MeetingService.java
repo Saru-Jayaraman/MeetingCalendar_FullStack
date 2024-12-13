@@ -1,8 +1,10 @@
 package se.lexicon.meetingcalendar_backend.service;
 
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import se.lexicon.meetingcalendar_backend.dto.MeetingDTO;
 import se.lexicon.meetingcalendar_backend.entity.Meeting;
+import se.lexicon.meetingcalendar_backend.exception.EmailServiceFailedException;
 import se.lexicon.meetingcalendar_backend.repository.MeetingRepository;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.stream.Collectors;
 @Service
 public class MeetingService {
     private final MeetingRepository meetingRepository;
+    private final EmailService emailService;
 
-    public MeetingService(MeetingRepository meetingRepository) {
+    public MeetingService(MeetingRepository meetingRepository, EmailService emailService) {
         this.meetingRepository = meetingRepository;
+        this.emailService = emailService;
     }
 
     public MeetingDTO convertToDTO(Meeting entity) {
@@ -58,6 +62,12 @@ public class MeetingService {
     public MeetingDTO saveMeeting(MeetingDTO meeting) {
         Meeting meetingEntity = convertToEntity(meeting);
         Meeting savedMeeting = meetingRepository.save(meetingEntity);
+        //todo: Send a Welcome Email when registered a new user
+        HttpStatusCode statusCode = emailService.sendRegistrationEmail(meetingEntity);
+        if(!statusCode.is2xxSuccessful()) {
+            System.out.println("Status code: " + statusCode);
+            throw new EmailServiceFailedException("EMAIL NOT SENT!!!");
+        }
         return convertToDTO(savedMeeting);
     }
 
