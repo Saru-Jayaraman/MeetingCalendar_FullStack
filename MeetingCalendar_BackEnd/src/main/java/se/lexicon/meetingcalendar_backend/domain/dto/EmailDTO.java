@@ -1,4 +1,4 @@
-package se.lexicon.meetingcalendar_backend.entity;
+package se.lexicon.meetingcalendar_backend.domain.dto;
 
 import lombok.*;
 

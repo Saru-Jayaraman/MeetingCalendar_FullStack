@@ -1,4 +1,4 @@
-package se.lexicon.meetingcalendar_backend.dto;
+package se.lexicon.meetingcalendar_backend.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

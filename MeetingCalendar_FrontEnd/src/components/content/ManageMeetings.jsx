@@ -12,7 +12,7 @@ const ManageMeetings = () => {
     useEffect(() => {
         fetchAllMeetingsAPICall();
     }, [reload]);
-
+    
     const methods = useForm();
     let [meetingFormData, setMeetingFormData] = useState({
         title: "",
@@ -62,7 +62,6 @@ const ManageMeetings = () => {
         clearFields();
         postAPIOperation("UPDATED", "warning");
         document.getElementById("meetingform").style.display="none";
-
     };
 
     const handleDeleteMeeting = (deleteId) => {

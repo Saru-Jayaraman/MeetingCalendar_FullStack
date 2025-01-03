@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import UsersAndPermissions from '../dashboard/UsersAndPermissions';
 import Notifications from '../dashboard/Notifications';
@@ -16,22 +17,52 @@ import { BsGraphUpArrow } from "react-icons/bs";
 import { IoSettingsSharp } from "react-icons/io5";
 
 const Dashboard = () => {
+    useEffect(() => {
+        fetchAllDashboardDetailsAPICall();
+    }, []);
+
+    const apiEndpoint = "http://localhost:8080/api/dashboard";
     const navigate = useNavigate();
-    const dashboardItems = [
-        {id: 1, name: "Schedule Meeting", icon: <FaCalendarPlus />, navigateUrl: "/dashboard/scheduleMeeting"},
-        {id: 2, name: "Manage Meetings", icon: <FaCalendar />, navigateUrl: "/dashboard/manageMeeting"},
-        {id: 3, name: "Users & Permissions", icon: <FaUsers />, navigateUrl: "/dashboard/usersAndPermissions"},
-        {id: 4, name: "Notifications", icon: <IoIosNotifications />, navigateUrl: "/dashboard/notifications"},
-        {id: 5, name: "Analytics", icon: <BsGraphUpArrow />, navigateUrl: "/dashboard/analytics"},
-        {id: 6, name: "Settings", icon: <IoSettingsSharp />, navigateUrl: "/dashboard/settings"}
-    ];
+    const [dashboardItems, setDashboardItems] = useState([]);
+    const iconMap = {
+        FaCalendarPlus: FaCalendarPlus,
+        FaCalendar: FaCalendar,
+        FaUsers: FaUsers,
+        IoIosNotifications: IoIosNotifications,
+        BsGraphUpArrow: BsGraphUpArrow,
+        IoSettingsSharp: IoSettingsSharp
+    };
+
+    const IconRender = ({iconName}) => {
+        const IconComponent = iconMap[iconName];
+        return IconComponent ? <IconComponent /> : null;
+    };
+
+    const fetchAllDashboardDetailsAPICall = async () => {
+        console.log("Step1: Request FETCH ALL...");
+        await axios.get(apiEndpoint)
+                    .then(response => {
+                        console.log("Step2: Response FETCH ALL...");
+                        if(response.status === 200) {
+                            console.log(response.data);
+                            setDashboardItems(response.data);
+                        } else {
+                            console.log("Unexpected response status...", response.status);
+                        }
+                    })
+                    .catch(error => {
+                        console.log("Error on fetching dashboard details...", error);
+        });
+        console.log("Step3: Finish FETCH ALL...");
+    };
 
     const displayDashboardItems = () => {
         let liElements = dashboardItems.map((item) => {
             const liElement = 
-                <li className="list-group-item" key={item.id}>
-                    <button className="list-group-item list-group-item-action" id={item.id} 
-                        onClick={() => handleDashboardClick(item.id, item.navigateUrl)}>{item.icon} {item.name}
+                <li className="list-group-item" key={item.dashboardTabId}>
+                    <button className="list-group-item list-group-item-action" id={item.dashboardTabId} 
+                        onClick={() => handleDashboardClick(item.dashboardTabId, item.dashboardTabNavigateUrl)}>
+                            <IconRender iconName={item.dashboardTabIcon} /> {item.dashboardTabName}
                     </button>
                 </li>
             return liElement;

@@ -2,12 +2,13 @@ package se.lexicon.meetingcalendar_backend.service;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import se.lexicon.meetingcalendar_backend.dto.MeetingDTO;
-import se.lexicon.meetingcalendar_backend.entity.Meeting;
+import se.lexicon.meetingcalendar_backend.domain.dto.MeetingDTO;
+import se.lexicon.meetingcalendar_backend.domain.entity.Meeting;
 import se.lexicon.meetingcalendar_backend.exception.EmailServiceFailedException;
 import se.lexicon.meetingcalendar_backend.repository.MeetingRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,8 +63,8 @@ public class MeetingService {
     public MeetingDTO saveMeeting(MeetingDTO meeting) {
         Meeting meetingEntity = convertToEntity(meeting);
         Meeting savedMeeting = meetingRepository.save(meetingEntity);
-        //todo: Send a Welcome Email when registered a new user
-        HttpStatusCode statusCode = emailService.sendRegistrationEmail(meetingEntity);
+        //todo: Send an Invite Email when meeting is created
+        HttpStatusCode statusCode = emailService.sendCreateRegistrationEmail(meetingEntity);
         if(!statusCode.is2xxSuccessful()) {
             System.out.println("Status code: " + statusCode);
             throw new EmailServiceFailedException("EMAIL NOT SENT!!!");
@@ -74,8 +75,22 @@ public class MeetingService {
     public void updateMeeting(Long id, MeetingDTO meeting) {
         Meeting foundMeeting = meetingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Meeting not found for the ID: " + id));
+        System.out.println(foundMeeting);
         Meeting entity = convertToEntity(meeting);
-        Meeting savedMeeting = meetingRepository.save(entity);
+
+        if(!Objects.equals(foundMeeting.getDate(), entity.getDate()) ||
+                !Objects.equals(foundMeeting.getStartTime(), entity.getStartTime()) ||
+                !Objects.equals(foundMeeting.getEndTime(), entity.getEndTime()) ||
+                !Objects.equals(foundMeeting.getParticipants(), entity.getParticipants())) {
+            //todo: Send an Invite Email whenever the meeting is updated
+            HttpStatusCode statusCode = emailService.sendUpdateRegistrationEmail(entity);
+            if(!statusCode.is2xxSuccessful()) {
+                System.out.println("Status code: " + statusCode);
+                throw new EmailServiceFailedException("EMAIL NOT SENT!!!");
+            }
+        }
+        meetingRepository.save(entity);
+        System.out.println(foundMeeting);
     }
 
     public void deleteMeeting(Long id) {
