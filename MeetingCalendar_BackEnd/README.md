@@ -12,24 +12,19 @@
 * Whenever Dashboard API is called, then all these data are returned as array of DTO and rendered on the Meeting Calendar UI.
 ### Meeting Controller:
 5 APIs are created.
-**`GetAllMeetings`**
-- Returns all available meetings data present inside Meetings table as an array of MeetingDTO.
-**`GetMeetingById`**
-- Return meeting by their ID as a MeetingDTO.
-**`CreateMeeting`**
-- Meeting body is received and saved inside Meetings table. Email is generated to respective participants after create.
-**`UpdateMeeting`**
-- Meeting body is received and updated inside Meetings table. Email is generated to respective participants after update.
-**`DeleteMeeting`**
-- Meeting is deleted inside Meetings table by their ID.
+* **`GetAllMeetings:`** Returns all available meetings data present inside Meetings table as an array of MeetingDTO.
+* **`GetMeetingById:`** Return meeting by their ID as a MeetingDTO.
+* **`CreateMeeting:`** Meeting body is received and saved inside Meetings table. Email is generated to respective participants after create.
+* **`UpdateMeeting:`** Meeting body is received and updated inside Meetings table. Email is generated to respective participants after update.
+* **`DeleteMeeting:`** Meeting is deleted inside Meetings table by their ID.
 ### Navbar Controller:
 Two APIs are created.
-**`Navbar`**
-- Populates the Navbar table with ID, Name and Url when the application starts.
--Whenever Navbar API is called, then all these data are returned as array of DTO and rendered on the Meeting Calendar UI.
-**`NavbarDropdown`**
-- Populates the NavbarDropdown table with ID, Name, Icon and Href when the application starts.
--Whenever NavbarDropdown API is called, then all these data are returned as array of DTO and rendered on the Meeting Calendar UI.
+* **`Navbar:`**
+  - Populates the Navbar table with ID, Name and Url when the application starts.
+  - Whenever Navbar API is called, then all these data are returned as array of DTO and rendered on the Meeting Calendar UI.
+* **`NavbarDropdown:`**
+  - Populates the NavbarDropdown table with ID, Name, Icon and Href when the application starts.
+  - Whenever NavbarDropdown API is called, then all these data are returned as array of DTO and rendered on the Meeting Calendar UI.
 
 ### Technical Requirements:
 #### Backend:
