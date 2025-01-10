@@ -1,6 +1,6 @@
 ## MEETING CALENDAR FRONTEND APPLICATION Using REACT JS
 ### Objective:
-* Create a Meeting Calendar React Component which focusses more on Schedule & Manage Meetings, Form validation, Apply Routers to Switch between Components and Use Axios to Connect with Spring boot application.
+* Create a Meeting Calendar React Component which focuses more on Schedule & Manage Meetings, Form validation, Apply Routers to Switch between Components and Use Axios to Connect with Spring boot application.
 * Follow React best practices to ensure the solution is modular, reusable, scalable, and professional.
 
 ### Installed Plugins:
